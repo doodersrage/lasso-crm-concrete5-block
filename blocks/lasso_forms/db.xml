@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<schema version="0.3">
+    <table name="btLMSBlockContent">
+        <field name="bID" type="I">
+            <key />
+            <unsigned />
+        </field>
+        <field name="apiKey" type="C" size="255"></field>
+        <field name="signupThankYouLink" type="X"></field>
+        <field name="thankYouEmailTemplateId" type="C" size="255"></field>
+        <field name="questionId" type="C" size="255"></field>
+        <field name="questionName" type="C" size="255"></field>
+        <field name="questionAnswers" type="X"></field>
+    </table>
+</schema>

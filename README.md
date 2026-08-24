@@ -31,17 +31,37 @@ The package installs the **Lasso CRM Form** block type automatically.
 
 ```
 packages/lasso_crm/
-├── controller.php          # Package installer
-├── blocks/
-│   └── lasso_forms/        # Block type files
-│       ├── controller.php
-│       ├── view.php
-│       ├── add.php
-│       ├── edit.php
-│       ├── form_setup_html.php
-│       └── db.xml
-└── README.md
+├── controller.php              # Package installer and service registration
+├── src/
+│   ├── Data/UsStates.php       # US state/province list
+│   └── Lasso/
+│       ├── RegistrantClient.php
+│       ├── RegistrantPayloadBuilder.php
+│       ├── QuestionAnswerParser.php
+│       └── SubmissionValidator.php
+└── blocks/
+    └── lasso_forms/
+        ├── controller.php
+        ├── view.php
+        ├── form.php
+        ├── composer.php
+        ├── add.php
+        ├── edit.php
+        └── db.xml
 ```
+
+## Concrete CMS 9 Patterns
+
+This package follows current Concrete CMS 9 conventions:
+
+- PSR-4 autoloading via `$pkgAutoloaderRegistries`
+- Service classes registered in the package `on_start()` method
+- Guzzle HTTP client for Lasso API requests
+- `ErrorList` for block and form validation
+- Core `Form` helper in block edit/composer templates
+- `composer.php` for Page Type composer support
+- Disabled block output caching for POST-handling forms
+- Legacy table migration from `btLMSBlockContent` to `btLassoForms` on upgrade
 
 ## API Details
 
@@ -53,12 +73,10 @@ Authorization: Bearer {apiKey}
 Content-Type: application/json
 ```
 
-The payload follows the Lasso v1 registrant schema with `person`, `emails`, `phones`, `addresses`, `notes`, `questions`, and `sourceType` fields in camelCase JSON format.
-
 ## Requirements
 
 - Concrete CMS 9.0 or later
-- PHP with cURL enabled
+- PHP with cURL or Guzzle support (included with Concrete CMS)
 
 ## License
 

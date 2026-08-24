@@ -1,5 +1,7 @@
 <?php defined('C5_EXECUTE') or die('Access Denied.');
 
+/** @var \Concrete\Core\Error\ErrorList\ErrorList|null $errors */
+/** @var array<string, string> $formData */
 $formData = $formData ?? [];
 $value = static function (string $key) use ($formData): string {
     return h($formData[$key] ?? '');
@@ -11,12 +13,14 @@ $value = static function (string $key) use ($formData): string {
         <div class="alert alert-success"><?= h($success) ?></div>
     <?php } ?>
 
-    <?php if (!empty($error)) { ?>
-        <div class="alert alert-danger"><?= h($error) ?></div>
+    <?php if (isset($errors) && $errors->has()) { ?>
+        <div class="ccm-system-errors alert alert-danger">
+            <?= $errors->output() ?>
+        </div>
     <?php } ?>
 
     <?php if (empty($success)) { ?>
-        <form method="post" action="<?= $this->action('submit') ?>">
+        <form method="post" action="<?= $view->action('submit') ?>">
             <?php $token = app('token'); echo $token->output('lasso_form_submit'); ?>
 
             <fieldset class="mb-3">

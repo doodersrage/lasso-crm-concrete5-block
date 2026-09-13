@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<schema version="0.3">
+    <table name="btLassoInventory">
+        <field name="bID" type="I">
+            <key />
+            <unsigned />
+        </field>
+        <field name="apiKey" type="C" size="255"></field>
+        <field name="statusFilter" type="C" size="100"></field>
+        <field name="maxItems" type="I"></field>
+        <field name="showPrice" type="I" size="1"></field>
+        <field name="showPlan" type="I" size="1"></field>
+        <field name="showAvailability" type="I" size="1"></field>
+        <field name="emptyMessage" type="X"></field>
+    </table>
+</schema>

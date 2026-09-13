@@ -90,6 +90,24 @@ $value = static function (string $key) use ($formData): string {
             </fieldset>
 
             <button class="btn btn-primary" type="submit"><?= t('Submit') ?></button>
+            <input type="hidden" name="websiteTracking" id="lassoWebsiteTracking" value="">
         </form>
+        <script>
+        (function () {
+            var field = document.getElementById('lassoWebsiteTracking');
+            if (!field) {
+                return;
+            }
+            try {
+                if (window.LassoAnalytics && typeof window.LassoAnalytics === 'function') {
+                    // Prefer cookie set by Lasso tracker when available.
+                }
+                var match = document.cookie.match(/(?:^|; )ut=([^;]*)/);
+                if (match) {
+                    field.value = decodeURIComponent(match[1]);
+                }
+            } catch (e) {}
+        })();
+        </script>
     <?php } ?>
 </div>

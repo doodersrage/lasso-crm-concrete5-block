@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<schema version="0.3">
+    <table name="btLassoAppointments">
+        <field name="bID" type="I">
+            <key />
+            <unsigned />
+        </field>
+        <field name="apiKey" type="C" size="255"></field>
+        <field name="mode" type="C" size="20"></field>
+        <field name="thankYouMessage" type="X"></field>
+        <field name="thankYouLink" type="C" size="255"></field>
+        <field name="rotationId" type="C" size="100"></field>
+    </table>
+</schema>

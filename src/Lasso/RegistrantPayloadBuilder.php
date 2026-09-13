@@ -7,18 +7,29 @@ class RegistrantPayloadBuilder
     /** @var QuestionAnswerParser */
     private $questionAnswerParser;
 
-    public function __construct(QuestionAnswerParser $questionAnswerParser)
+    /** @var ConnectionConfig */
+    private $connectionConfig;
+
+    public function __construct(QuestionAnswerParser $questionAnswerParser, ConnectionConfig $connectionConfig)
     {
         $this->questionAnswerParser = $questionAnswerParser;
+        $this->connectionConfig = $connectionConfig;
     }
 
     /**
      * @param array<string, string> $data
+     * @param array<string, mixed> $options
      *
      * @return array<string, mixed>
      */
-    public function build(array $data, ?string $questionId, ?string $questionName, ?string $questionAnswers, ?string $thankYouEmailTemplateId): array
+    public function build(array $data, ?string $questionId, ?string $questionName, ?string $questionAnswers, ?string $thankYouEmailTemplateId, array $options = []): array
     {
+        $sourceType = $options['sourceType'] ?? $this->connectionConfig->getDefaultSourceType();
+        $templateId = $thankYouEmailTemplateId;
+        if ($templateId === null || $templateId === '') {
+            $templateId = $this->connectionConfig->getThankYouEmailTemplateId();
+        }
+
         $payload = [
             'person' => [
                 'firstName' => $data['firstName'],
@@ -30,12 +41,12 @@ class RegistrantPayloadBuilder
                 'primary' => true,
             ]],
             'sourceType' => [
-                'sourceType' => 'Online Registration',
+                'sourceType' => $sourceType,
             ],
             'sendSalesRepAssignmentNotification' => true,
         ];
 
-        if ($data['phone'] !== '') {
+        if (!empty($data['phone'])) {
             $payload['phones'] = [[
                 'phone' => $data['phone'],
                 'type' => 'Home',
@@ -43,30 +54,43 @@ class RegistrantPayloadBuilder
             ]];
         }
 
-        if ($data['address'] !== '' || $data['city'] !== '' || $data['state'] !== '' || $data['postalCode'] !== '') {
+        if (!empty($data['address']) || !empty($data['city']) || !empty($data['state']) || !empty($data['postalCode'])) {
             $payload['addresses'] = [[
-                'address' => $data['address'],
-                'city' => $data['city'],
-                'state' => $data['state'],
-                'zipCode' => $data['postalCode'],
+                'address' => $data['address'] ?? '',
+                'city' => $data['city'] ?? '',
+                'state' => $data['state'] ?? '',
+                'zipCode' => $data['postalCode'] ?? '',
                 'country' => 'USA',
                 'type' => 'Home',
                 'primary' => true,
             ]];
         }
 
-        if ($data['comments'] !== '') {
+        if (!empty($data['comments'])) {
             $payload['notes'] = [[
                 'note' => $data['comments'],
             ]];
         }
 
-        if (!empty($thankYouEmailTemplateId)) {
-            $payload['thankYouEmailTemplateId'] = $thankYouEmailTemplateId;
+        if (!empty($templateId)) {
+            $payload['thankYouEmailTemplateId'] = $templateId;
+        }
+
+        if (!empty($options['rotationId'])) {
+            $payload['rotationId'] = $options['rotationId'];
+        }
+
+        if (!empty($options['websiteTracking'])) {
+            $payload['websiteTracking'] = $options['websiteTracking'];
+        } elseif (!empty($data['websiteTracking'])) {
+            $payload['websiteTracking'] = [
+                'domainAccountId' => $this->connectionConfig->getTrackingAccountId(),
+                'guid' => $data['websiteTracking'],
+            ];
         }
 
         $question = $this->buildQuestionPayload(
-            $data['questionAnswerId'],
+            $data['questionAnswerId'] ?? '',
             $questionId,
             $questionName,
             $questionAnswers

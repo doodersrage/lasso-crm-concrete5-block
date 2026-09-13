@@ -2,63 +2,28 @@
 
 namespace Concrete\Package\LassoCrm\Lasso;
 
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\GuzzleException;
-
+/**
+ * Backwards-compatible wrapper around ApiClient for registrant creation.
+ *
+ * @deprecated Use ApiClient::createRegistrant() instead.
+ */
 class RegistrantClient
 {
-    private const API_URL = 'https://api.lassocrm.com/v1/registrants';
+    /** @var ApiClient */
+    private $apiClient;
 
-    /** @var ClientInterface */
-    private $httpClient;
-
-    public function __construct(ClientInterface $httpClient)
+    public function __construct(ApiClient $apiClient)
     {
-        $this->httpClient = $httpClient;
+        $this->apiClient = $apiClient;
     }
 
     /**
      * @param array<string, mixed> $payload
      *
-     * @return array{success: bool, message?: string}
+     * @return array{success: bool, message?: string, data?: mixed, status?: int}
      */
     public function createRegistrant(string $apiKey, array $payload): array
     {
-        try {
-            $response = $this->httpClient->request('POST', self::API_URL, [
-                'json' => $payload,
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'Authorization' => 'Bearer ' . $apiKey,
-                ],
-            ]);
-        } catch (GuzzleException $e) {
-            return [
-                'success' => false,
-                'message' => t('Unable to connect to Lasso CRM.') . ' ' . $e->getMessage(),
-            ];
-        }
-
-        $httpCode = $response->getStatusCode();
-        if ($httpCode === 201) {
-            return ['success' => true];
-        }
-
-        $responseBody = (string) $response->getBody();
-        $decoded = json_decode($responseBody, true);
-        $message = t('Lasso CRM rejected the submission.');
-
-        if (is_array($decoded)) {
-            if (!empty($decoded['message'])) {
-                $message = (string) $decoded['message'];
-            } elseif (!empty($decoded['error'])) {
-                $message = is_string($decoded['error']) ? $decoded['error'] : json_encode($decoded['error']);
-            }
-        }
-
-        return [
-            'success' => false,
-            'message' => $message . ' (' . t('HTTP %s', $httpCode) . ')',
-        ];
+        return $this->apiClient->createRegistrant($payload, $apiKey);
     }
 }

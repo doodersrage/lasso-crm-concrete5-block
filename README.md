@@ -1,6 +1,8 @@
 # Lasso CRM for Concrete CMS
 
-A Concrete CMS 9 package that integrates [Lasso CRM](https://www.lassocrm.com/) for lead capture, inventory display, appointment inquiries, website tracking, and Dashboard administration.
+**v3.0.1** — Concrete CMS 9 package for [Lasso CRM](https://www.lassocrm.com/): lead forms, inventory, appointments, website tracking, and Dashboard administration.
+
+Portfolio listing: [robmcd.name/work/concrete-cms](https://robmcd.name/work/concrete-cms)
 
 ## Installation
 
@@ -18,7 +20,7 @@ The package installs:
 1. Open **Dashboard → Lasso CRM → Settings**.
 2. Enter your project-scoped Lasso API key.
 3. Optionally set tracking account ID, default source type, thank-you email template ID, and global tracking.
-4. Click **Test Connection** to verify GET `/projects/settings`.
+4. Click **Test Connection** to verify `GET /projects/settings`.
 
 Blocks use the package API key by default. Each block can optionally override the key for multi-project sites.
 
@@ -42,7 +44,11 @@ Lists inventory from `GET /inventory` with optional status filter, max items, an
 
 Injects Lasso Analytics v2 (`pageView` + `patchRegistrationForms`). Prefer enabling **global tracking** in Settings; use this block for page-specific account overrides.
 
-## Package Structure
+## What’s new in 3.x
+
+Earlier releases were lead-form focused. **3.0.1** ships the full package: Dashboard settings + Test Connection, Form, Inventory, Appointments, Website Tracking, and shared/per-block API keys.
+
+## Package structure
 
 ```
 packages/lasso_crm/
@@ -84,7 +90,11 @@ Used endpoints include registrants (create/list), project settings, inventory, p
 ## Requirements
 
 - Concrete CMS 9.0 or later
-- PHP with Guzzle (included with Concrete CMS)
+- PHP 8.0+ with Guzzle (included with Concrete CMS)
+
+## Marketplace
+
+Not listed on the Concrete CMS Marketplace yet. Until then, install from this repository. Marketplace URL will be added here when the product goes live.
 
 ## License
 

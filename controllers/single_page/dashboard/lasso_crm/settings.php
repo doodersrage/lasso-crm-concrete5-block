@@ -42,7 +42,8 @@ class Settings extends DashboardPageController
         ]);
 
         $this->flash('success', t('Lasso CRM settings saved.'));
-        $this->redirect('/dashboard/lasso_crm/settings');
+
+        return $this->buildRedirect('/dashboard/lasso_crm/settings');
     }
 
     public function test_connection()
@@ -64,7 +65,7 @@ class Settings extends DashboardPageController
             $this->error->add($result['message'] ?? t('Connection failed.'));
         }
 
-        $this->redirect('/dashboard/lasso_crm/settings');
+        return $this->buildRedirect('/dashboard/lasso_crm/settings');
     }
 
     private function loadSettings(): void

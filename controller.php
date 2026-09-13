@@ -25,7 +25,8 @@ class Controller extends Package
 {
     protected $pkgHandle = 'lasso_crm';
     protected $appVersionRequired = '9.0.0';
-    protected $pkgVersion = '3.0.0';
+    protected $pkgVersion = '3.0.1';
+    protected $phpVersionRequired = '8.0.0';
 
     protected $pkgAutoloaderRegistries = [
         'src' => 'Concrete\Package\LassoCrm',
@@ -86,7 +87,12 @@ class Controller extends Package
 
         Events::addListener('on_page_view', function ($event) use ($app) {
             $page = $event->getPageObject();
-            if (!$page instanceof Page || $page->isAdminArea()) {
+            if (!$page instanceof Page || $page->isError()) {
+                return;
+            }
+
+            $dashboard = $app->make('helper/concrete/dashboard');
+            if ($dashboard->inDashboard($page) || $page->isAdminArea()) {
                 return;
             }
 
@@ -119,23 +125,7 @@ class Controller extends Package
         parent::upgrade();
         $this->migrateLegacyBlockTable();
         $this->migrateBlockApiKeyToPackageConfig();
-
-        $pkg = Package::getByHandle($this->pkgHandle);
-        if ($pkg) {
-            $this->installContent($pkg);
-        }
-    }
-
-    public function uninstall()
-    {
-        foreach ($this->blockHandles as $handle) {
-            $bt = BlockType::getByHandle($handle);
-            if (is_object($bt)) {
-                $bt->delete();
-            }
-        }
-
-        parent::uninstall();
+        $this->installContent($this);
     }
 
     private function installContent(Package $pkg): void

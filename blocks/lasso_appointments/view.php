@@ -50,7 +50,7 @@ $showForm = in_array($mode, ['inquiry', 'both'], true);
 
         <?php if (isset($errors) && $errors->has()) { ?>
             <div class="ccm-system-errors alert alert-danger">
-                <?= $errors->output() ?>
+                <?= (new \Concrete\Core\Error\ErrorList\Formatter\StandardFormatter($errors))->render() ?>
             </div>
         <?php } ?>
 
